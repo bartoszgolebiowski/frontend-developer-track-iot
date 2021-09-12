@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  flex-direction: column;
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+.form__label {
+  margin: 0 auto;
+  padding: 0.5rem 0;
+  width: 20rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.form__footer {
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form__footer button {
+  width: 5rem;
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import * as utils from "./index.js";
+    console.log(utils, "modules from codebase");
+  </script>
+  <script type="module">
+    import * as Redux from "https://unpkg.com/redux@4.1.0/es/redux.mjs";
+    import * as _ from "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.1/underscore-esm.min.js";
+
+    console.log(_, "underscore from cdn");
+    console.log(Redux, "redux from cdn");
+  </script>
+</html>
