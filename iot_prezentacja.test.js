@@ -1042,7 +1042,7 @@ describe.skip("8. Prototype", () => {
     expect(medic.heal()).toBe("I am surgeon");
   });
 
-  describe("zadanie", () => {
+  describe("zadanie 1", () => {
     // Zdefiniuj funkcje dziedziczące z prototype Animal
 
     // I. Shark
@@ -1115,6 +1115,96 @@ describe.skip("8. Prototype", () => {
     });
 
     describe("The Dog function prototype", () => {
+      it("test dla psa", () => {
+        const doug = new Dog("Doug", 12, "Serving his master", "Eliza");
+        expect(doug.name).toBe("Doug");
+        expect(doug.age).toBe(12);
+        expect(doug.legs).toBe(4);
+        expect(doug.species).toBe("dog");
+        expect(doug.status).toBe("Serving his master");
+        expect(doug.introduce()).toBe(
+          "Hello, my name is Doug and I am 12 years old."
+        );
+        expect(doug.greetMaster()).toBe("Hello Eliza");
+      });
+    });
+  });
+
+  describe("zadanie 2", () => {
+    // Zdefiniuj klasy
+
+    // I. Shark
+    // konstruktor przyjmuje 3 argumenty name, age, status, kazdy rekin ma 0 nog, i jest gatunku (species) shark,
+
+    // II. Cat
+    // konstruktor przyjmuje 3 argumenty name, age, status, kazdy kot ma 4 nogi, i jest gatunku (species) cat,
+    // metoda introduce powinna zawierac dokladnie takie samo przywitanie jak kazde zwierze typu Animal oraz dopisek Meow meow!
+
+    // III. Dog
+    // konstruktor przyjmuje 4 argumenty name, age, status, oraz master, kazdy pies ma 4 nogi, i jest gatunku (species) dog,
+    // metoda introduce powinna zawierac dokladnie takie samo przywitanie jak kazde zwierze typu Animal oraz dopisek Hellow ${master}!
+
+    class Animal {
+      constructor(name, age, legs, species, status) {
+        this.name = name;
+        this.age = age;
+        this.legs = legs;
+        this.species = species;
+        this.status = status;
+      }
+      introduce() {
+        return `Hello, my name is ${this.name} and I am ${this.age} years old.`;
+      }
+    }
+
+    describe("The Shark class", () => {
+      it("test dla rekina", () => {
+        const billy = new Shark("Billy", 3, "Alive and well");
+        expect(billy.name).toBe("Billy");
+        expect(billy.age).toBe(3);
+        expect(billy.legs).toBe(0);
+        expect(billy.species).toBe("shark");
+        expect(billy.status).toBe("Alive and well");
+        expect(billy.introduce()).toBe(
+          `Hello, my name is Billy and I am 3 years old.`
+        );
+
+        const charles = new Shark("Charles", 8, "Finding a mate");
+        expect(charles.name).toBe("Charles");
+        expect(charles.age).toBe(8);
+        expect(charles.legs).toBe(0);
+        expect(charles.species).toBe("shark");
+        expect(charles.status).toBe("Finding a mate");
+        expect(charles.introduce()).toBe(
+          `Hello, my name is Charles and I am 8 years old.`
+        );
+      });
+    });
+
+    describe("The Cat class", () => {
+      it("test dla kota", () => {
+        const cathy = new Cat("Cathy", 7, "Playing with a ball of yarn");
+        expect(cathy.name).toBe("Cathy");
+        expect(cathy.age).toBe(7);
+        expect(cathy.legs).toBe(4);
+        expect(cathy.species).toBe("cat");
+        expect(cathy.status).toBe("Playing with a ball of yarn");
+        expect(cathy.introduce()).toBe(
+          "Hello, my name is Cathy and I am 7 years old.  Meow meow!"
+        );
+        const spitsy = new Cat("Spitsy", 6, "sleeping");
+        expect(spitsy.name).toBe("Spitsy");
+        expect(spitsy.age).toBe(6);
+        expect(spitsy.legs).toBe(4);
+        expect(spitsy.species).toBe("cat");
+        expect(spitsy.status).toBe("sleeping");
+        expect(spitsy.introduce()).toBe(
+          "Hello, my name is Spitsy and I am 6 years old.  Meow meow!"
+        );
+      });
+    });
+
+    describe("The Dog class", () => {
       it("test dla psa", () => {
         const doug = new Dog("Doug", 12, "Serving his master", "Eliza");
         expect(doug.name).toBe("Doug");
