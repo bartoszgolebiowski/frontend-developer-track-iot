@@ -121,11 +121,17 @@ describe.skip("7. Closures", () => {
     expect(thirdPart(80)).toBe(170);
   });
 
-  it("zadania", () => {
+  describe("zadania", () => {
     it("stwórz cache dla którego kolejność argumentów nie ma znaczenia", () => {
       const cache = (func) => {
+        const cache = {};
         return (...args) => {
+          const key = args.sort().join("-");
+          if (cache[key]) {
+            return cache[key];
+          }
           const result = func(...args);
+          cache[key] = result;
           return result;
         };
       };
@@ -265,6 +271,7 @@ describe.skip("8. Prototype", () => {
     // III. Dog
     // konstruktor przyjmuje 4 argumenty name, age, status, oraz master, kazdy pies ma 4 nogi, i jest gatunku (species) dog,
     // metoda introduce powinna zawierac dokladnie takie samo przywitanie jak kazde zwierze typu Animal oraz dopisek Hellow ${master}!
+    // greetMaster nowa metoda która wyswietla mastera w formie "Hello ${master}"
 
     function Animal(name, age, legs, species, status) {
       this.name = name;
@@ -273,8 +280,32 @@ describe.skip("8. Prototype", () => {
       this.species = species;
       this.status = status;
     }
+
     Animal.prototype.introduce = function () {
       return `Hello, my name is ${this.name} and I am ${this.age} years old.`;
+    };
+
+    function Shark(name, age, status) {
+      Animal.call(this, name, age, 0, "shark", status);
+    }
+
+    Shark.prototype = Object.create(Animal.prototype);
+    function Cat(name, age, status) {
+      Animal.call(this, name, age, 4, "cat", status);
+    }
+
+    Cat.prototype = Object.create(Animal.prototype);
+    Cat.prototype.introduce = function () {
+      return `${Animal.prototype.introduce.call(this)}  Meow meow!`;
+    };
+
+    function Dog(name, age, status, master) {
+      Animal.call(this, name, age, 4, "dog", status);
+      this.master = master;
+    }
+    Dog.prototype = Object.create(Animal.prototype);
+    Dog.prototype.greetMaster = function () {
+      return `Hello ${this.master}`;
     };
 
     describe("The Shark function prototype", () => {
@@ -353,7 +384,7 @@ describe.skip("8. Prototype", () => {
     // III. Dog
     // konstruktor przyjmuje 4 argumenty name, age, status, oraz master, kazdy pies ma 4 nogi, i jest gatunku (species) dog,
     // metoda introduce powinna zawierac dokladnie takie samo przywitanie jak kazde zwierze typu Animal oraz dopisek Hellow ${master}!
-
+    // greetMaster nowa metoda która wyswietla mastera w formie "Hello ${master}"
     class Animal {
       constructor(name, age, legs, species, status) {
         this.name = name;
@@ -364,6 +395,31 @@ describe.skip("8. Prototype", () => {
       }
       introduce() {
         return `Hello, my name is ${this.name} and I am ${this.age} years old.`;
+      }
+    }
+
+    class Shark extends Animal {
+      constructor(name, age, status) {
+        super(name, age, 0, "shark", status);
+      }
+    }
+
+    class Cat extends Animal {
+      constructor(name, age, status) {
+        super(name, age, 4, "cat", status);
+      }
+      introduce() {
+        return `${super.introduce()}  Meow meow!`;
+      }
+    }
+
+    class Dog extends Animal {
+      constructor(name, age, status, master) {
+        super(name, age, 4, "dog", status);
+        this.master = master;
+      }
+      greetMaster() {
+        return `Hello ${this.master}`;
       }
     }
 
@@ -523,7 +579,11 @@ describe.skip("10. syntax ES6", () => {
 
     it("przekazanie funkcji do funkcji", () => {
       const sum = (a, b) => a + b;
-      const extraSum = (fun) => fun() * fun();
+      const extraSum = (fun) => {
+        const result1 = fun();
+        const result2 = fun();
+        return result1 * result2;
+      };
       const sumFun = () => sum(5, 5);
 
       expect(extraSum(() => sumFun())).toBe(100);
@@ -533,6 +593,7 @@ describe.skip("10. syntax ES6", () => {
 
   describe("wartosci domyslne", () => {
     const sum = (a = -1, b = 2) => a + b;
+
     const extraSum = (fun) => fun() * fun();
     const sumFun = () => sum();
 
@@ -542,13 +603,35 @@ describe.skip("10. syntax ES6", () => {
 
   describe("operator speard", () => {
     it("zamiana argumentów na tablice", () => {
-      const f = (a, b, c, ...args) => args.map((el) => el + a + b + c);
+      const f = (...args) => args.map((el) => el + "123");
       expect(f(1, 2, 3, "a", "b", "c", { a: 1, b: 2 })).toEqual([
+        "1123",
+        "2123",
+        "3123",
         "a123",
         "b123",
         "c123",
         "[object Object]123",
       ]);
+    });
+
+    it("destrukturyzacja", () => {
+      const obj1 = {
+        a: 1,
+        b: 2,
+        c: 3,
+        d: 4,
+      };
+      const b = obj.b;
+      const a = obj.a;
+      const c = obj.c;
+      const d = obj.d;
+
+      const { a: a1, b: b1, c: c1, d: d1 } = obj1;
+      expect(a).toBe(a1);
+      expect(b).toBe(b1);
+      expect(c).toBe(c1);
+      expect(d).toBe(d1);
     });
 
     it("usuwanie z obiektu pewnych pól", () => {
@@ -558,6 +641,12 @@ describe.skip("10. syntax ES6", () => {
         c: 3,
         d: 4,
       };
+
+      // const test = {
+      //   ...obj2,
+      // };
+      // delete test[a]
+      // delete test[b]
 
       const { a, b, ...obj2 } = obj1;
       expect(obj2).toEqual({ c: 3, d: 4 });
@@ -617,16 +706,17 @@ describe.skip("10. syntax ES6", () => {
 
   describe("dynamiczne przypisywanie do obiektu", () => {
     it("przykład", () => {
-      const variable = "123-test";
+      const variable = "IOT_SZKOLENIE";
       const obj = {
         [`${variable}-1`]: "test1",
         [`${variable}-2`]: "test2",
         [`${variable}-3`]: "test3",
       };
+
       expect(obj).toEqual({
-        "123-test-1": "test1",
-        "123-test-2": "test2",
-        "123-test-3": "test3",
+        "IOT_SZKOLENIE-1": "test1",
+        "IOT_SZKOLENIE-2": "test2",
+        "IOT_SZKOLENIE-3": "test3",
       });
       expect(obj[`${variable}-3`]).toBe("test3");
     });

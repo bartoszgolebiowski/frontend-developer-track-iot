@@ -13,7 +13,8 @@ describe.skip("1. Values, types and operators", () => {
     });
 
     it("obiekty są sprowadzane do wyrazenia stringowego [object Object]", () => {
-      const result = 1 + { a: 1, b: 2 } + 42 + " $";
+      const obj = { a: 1, b: 2 };
+      const result = 1 + obj + 42 + " $";
       expect(result).toBe("1[object Object]42 $");
       expect(typeof result).toBe("string");
     });
@@ -64,7 +65,7 @@ describe.skip("1. Values, types and operators", () => {
       expect(color4.test).not.toBeDefined();
     });
 
-    it.skip("napisz kawałek kodu który zaliczy test, ", () => {
+    it("napisz kawałek kodu który zaliczy test, ", () => {
       let result = "";
       const sing = () => {};
 
@@ -90,7 +91,7 @@ describe.skip("1. Values, types and operators", () => {
       if (found) {
         counter = counter + 100;
       }
-      expect(counter).toBe(1);
+      expect(counter).toBe(100);
     });
   });
 });
@@ -423,7 +424,7 @@ describe.skip("4. Functions", () => {
       (function () {
         let firstVariable;
         let secondVariable;
-      })();
+      })()
 
       expect(firstVariable).toBe(undefined);
       expect(secondVariable).toBe(undefined);
@@ -586,7 +587,7 @@ describe.skip("5. This", () => {
       };
 
       const fun = obj.sayHello;
-      expect(fun()).toBe("Hello "); // -> sayHello.call(this)
+      expect(fun()).toBe("Hello undefined"); // -> sayHello.call(this)
     });
 
     it("wywołanie metody wewnatrz obiektu z uzyciem call", () => {
@@ -679,7 +680,7 @@ describe.skip("5. This", () => {
       };
 
       const person = new Person("John", 30);
-      expect(person.sayHello()).toBe("");
+      expect(person.sayHello()).toBe("Hello John");
     });
 
     it("2", () => {
@@ -695,9 +696,9 @@ describe.skip("5. This", () => {
       };
 
       const test = obj.prop.getFullname;
-      expect(obj.prop.getFullname()).toBe("");
-      expect(test()).toBe("");
-      expect(test.call({ fullname: "test" })).toBe("");
+      expect(obj.prop.getFullname()).toBe("Aurelio De Rosa");
+      expect(test()).toBe(undefined);
+      expect(test.call({ fullname: "test" })).toBe("test");
     });
 
     it("3", () => {
@@ -712,7 +713,7 @@ describe.skip("5. This", () => {
         },
       };
 
-      expect(car.getBrand()).toBe("");
+      expect(car.getBrand()).toBe("Nissan");
     });
   });
 });
@@ -724,13 +725,13 @@ describe.skip("6. Hoisting", () => {
     expect(a).toBe(1);
   });
 
-  it.skip("przypisanie zmiennej typu let", () => {
+  it("przypisanie zmiennej typu let", () => {
     expect(a).toBe(undefined);
     let a = 1;
     expect(a).toBe(1);
   });
 
-  it.skip("przypisanie zmiennej typu const", () => {
+  it("przypisanie zmiennej typu const", () => {
     expect(a).toBe(undefined);
     const a = 1;
     expect(a).toBe(1);
@@ -747,6 +748,10 @@ describe.skip("6. Hoisting", () => {
   });
 
   it("przypisanie deklaracja funkcji i zmienner typu var o tej samej nazwie", () => {
+    var fun
+    function fun() {
+      return 2;
+    }
     expect(fun).not.toBe(undefined);
     expect(fun()).toBe(2);
 
@@ -774,7 +779,7 @@ describe.skip("6. Hoisting", () => {
     expect(Frodo.weight).toBe(300);
   });
 
-  it.skip("deklaracja klasy po stworzeniem instancji klasy", () => {
+  it("deklaracja klasy po stworzeniem instancji klasy", () => {
     var Frodo = new Hobbit();
     Frodo.height = 100;
     Frodo.weight = 300;

@@ -1,0 +1,21 @@
+{
+  "args": {}, 
+  "data": "{\"firstName\":\"John\",\"lastName\":\"Snow\"}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Accept-Encoding": "gzip,deflate", 
+    "Content-Length": "38", 
+    "Content-Type": "text/plain;charset=UTF-8", 
+    "Host": "httpbin.org", 
+    "User-Agent": "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)", 
+    "X-Amzn-Trace-Id": "Root=1-613f5596-3cfbd5214eee6d432fa48634"
+  }, 
+  "json": {
+    "firstName": "John", 
+    "lastName": "Snow"
+  }, 
+  "origin": "77.65.160.10", 
+  "url": "https://httpbin.org/post"
+}

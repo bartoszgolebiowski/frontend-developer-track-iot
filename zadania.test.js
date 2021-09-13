@@ -19,7 +19,7 @@ Vivamus euismod vel ex a volutpat. Curabitur cursus pharetra ex, eget accumsan n
 
 describe("zadania", () => {
   describe.skip("Map", () => {
-    it("API", () => {
+    it.skip("API", () => {
       const map = new Map();
       const key = {
         a: 1,
@@ -107,6 +107,13 @@ describe("zadania", () => {
       map.set(7, false);
       map.set(8, true);
 
+      for (const [key, value] of map) {
+        if (value) {
+          trueArr.push(true);
+        } else {
+          falseArr.push(false);
+        }
+      }
       expect(trueArr).toEqual([true, true, true]);
       expect(falseArr).toEqual([false, false, false, false, false]);
     });
@@ -115,6 +122,13 @@ describe("zadania", () => {
       // uzyj zmiennej words
       const map = new Map();
 
+      for (const word of words) {
+        if (map.has(word)) {
+          map.set(word, map.get(word) + 1);
+        } else {
+          map.set(word, 1);
+        }
+      }
       expect(map.get("lorem.")).toBe(2);
       expect(map.get("lorem")).toBe(2);
       expect(map.get("et")).toBe(4);
@@ -126,19 +140,36 @@ describe("zadania", () => {
       let secondMostFrequentCount = 0;
       const map = new Map();
 
+      for (const word of words) {
+        if (map.has(word)) {
+          map.set(word, [word, map.get(word)[1] + 1]);
+        } else {
+          map.set(word, [word, 1]);
+        }
+      }
+
+      const sorted = [...map.values()].sort((a, b) => b[1] - a[1]);
+      secondMostFrequent = sorted[0][0];
+      secondMostFrequentCount = sorted[0][1];
+
       //przypisz wyniki do zmiennych
-      expect(secondMostFrequent).toBe("at");
       expect(secondMostFrequentCount).toBe(9);
+      expect(secondMostFrequent).toBe("at");
     });
 
     it("stwórz cache dla którego kolejność argumentów ma znaczenie", () => {
       const cache = (func) => {
+        const cache = new Map();
         return (...args) => {
+          const key = args.join("-");
+          if (cache.has(key)) {
+            return cache.get(key);
+          }
           const result = func(...args);
+          cache.set(key, result);
           return result;
         };
       };
-
       let counter = 0;
       const sum = (a, b) => {
         counter++;
@@ -169,8 +200,14 @@ describe("zadania", () => {
 
     it("stwórz cache dla którego kolejność argumentów nie ma znaczenia", () => {
       const cache = (func) => {
+        const cache = new Map();
         return (...args) => {
+          const key = args.sort().join("-");
+          if (cache.has(key)) {
+            return cache.get(key);
+          }
           const result = func(...args);
+          cache.set(key, result);
           return result;
         };
       };
@@ -206,7 +243,8 @@ describe("zadania", () => {
 
   describe.skip("Set", () => {
     it("API", () => {
-      const setFromArray = new Set([1, 2, 3, 4, 5]);
+      const setFromArray = new Set([1, 2, 3, 4, 5, 5, 5, 5, 5]);
+      expect(setFromArray.size).toBe(5);
       const set = new Set();
       set.add(42);
       set.add(42);
@@ -222,13 +260,10 @@ describe("zadania", () => {
 
       //   moze byc inna kolejnosc dla kluczy
       for (const value of set.values()) {
-        console.log(key);
       }
 
       //   moze byc inna kolejnosc dla kluczy
-      set.forEach((key) => {
-        console.log(key);
-      });
+      set.forEach((key) => {});
 
       // tworzenie tablicy z obiektu Set
       const arrayFromSet = Array.from(set);
@@ -259,26 +294,25 @@ describe("zadania", () => {
 
     it("oblicz ilość unikalnych wyrazów", () => {
       // uzyj zmiennej words
-      const set = new Set();
+      const set = new Set(words);
 
       expect(set.size).toBe(215);
     });
 
     it("wyznacz ilość wspólnych wyrazów dla dwóch fragmentów tesktu", () => {
       // uzyj zmiennej words i words2
-      const set = new Set();
-      const set2 = new Set();
-      const intersection = new Set();
-
+      const set = new Set(words);
+      const set2 = new Set(words2);
+      const intersection = new Set(words.filter((x) => set2.has(x)));
       expect(intersection.size).toBe(152);
     });
 
     it("wyznacz ilość rozłącznych wyrazów dla dwóch fragmentów tesktu", () => {
       // uzyj zmiennej words i words2
-      const set = new Set();
-      const set2 = new Set();
-      const diff = new Set();
-      const diff2 = new Set();
+      const set = new Set(words);
+      const set2 = new Set(words2);
+      const diff = new Set(words.filter((x) => !set2.has(x)));
+      const diff2 = new Set(words2.filter((x) => !set.has(x)));
 
       expect(diff.size).toBe(63);
       expect(diff2.size).toBe(96);
@@ -363,13 +397,14 @@ describe("zadania", () => {
     });
   });
 
-  describe.skip("Promise", () => {
+  describe("Promise", () => {
     const delayAndResolve = (ms, value) =>
       new Promise((resolve) => setTimeout(resolve(value), ms));
+
     const delayAndReject = (ms, value) =>
       new Promise((resolve, reject) => setTimeout(reject(value), ms));
 
-    const throwErrorAsyncFun = async (error) => {
+    const throwErrorAsync1000msFun = async (error) => {
       setTimeout(() => {
         throw new Error(error);
       }, 1000);
@@ -385,11 +420,16 @@ describe("zadania", () => {
       delayAndResolve(4900, "").then(() => {
         done();
       });
-
-      delay1000ms("a").then((res) => {
+      const zamowienie = delay1000ms("a");
+      zamowienie.then((res) => {
         //po 1000ms powinno byc "a"
         expect(res).toBe("a");
       });
+
+      throwErrorAsync1000msFun("d").catch((err) => {
+        expect(err.message).toBe("d");
+      });
+
       delay2000ms("b").then((res) => {
         //po 2000ms powinno byc "b"
         expect(res).toBe("b");
@@ -398,6 +438,7 @@ describe("zadania", () => {
       // chainowanie promisów
       delay1000ms("B")
         .then((res) => {
+          console.log("2");
           return delay1000ms(res + "C");
         })
         .then((res) => delay1000ms(res + "D"))
@@ -409,12 +450,10 @@ describe("zadania", () => {
         //po 500ms powinno byc "c", promise rejected
         expect(err).toBe("c");
       });
-      throwErrorAsyncFun("d").catch((err) => {
-        expect(err.message).toBe("d");
-      });
 
       Promise.all([delay1000ms(1), delay1000ms(2), delay2000ms("TEST")]).then(
         ([a, b, c]) => {
+          console.log("2");
           expect(a).toBe(1);
           expect(b).toBe(2);
           expect(c).toBe("TEST");
@@ -450,26 +489,28 @@ describe("zadania", () => {
       });
     });
 
-    it("ile wyrazów znajduję się w pliku lorem.txt", (done) => {
-      //fs.promises.readFile, funkcja do czytania plikow wykorzystująca promise.
+    it.only("ile wyrazów znajduję się w pliku lorem.txt", (done) => {
+      //fs.promises.readFile, funkcja do czytania plikow wykorzystująca promise. ./lorem.txt
 
-      Promise.resolve("").then((data) => {
-        let wordsQuantity = 0;
+      fs.promises.readFile("./lorem.txt", "utf8").then((data) => {
+        let wordsQuantity = data.split(" ").length;
         expect(wordsQuantity).toBe(424);
         done();
       });
     });
 
-    it("Zapisz 10 liczb do pliku temp.txt", (done) => {
+    it.only("Zapisz 10 liczb do pliku temp.txt", (done) => {
       //fs.promises.writeFile, funkcja do zapisywania danych do pliku wykorzystująca promise.
 
-      Promise.resolve().then((data) => {
-        //tutaj nie ma asercji, prosze samemu zobaczyć jakie dane zostana zapisane
-        done();
-      });
+      fs.promises
+        .writeFile("./digits.txt", "1 2 3 4 5 6 7 8 9 0")
+        .then((file) => {
+          //tutaj nie ma asercji, prosze samemu zobaczyć jakie dane zostana zapisane
+          done();
+        });
     });
 
-    it("Wykonaj request do https://httpbin.org/post", (done) => {
+    it.only("Wykonaj request do https://httpbin.org/post", (done) => {
       // "data" jest to obiekt zawierajacy dane do wyslania
       // wskazówka 1 ->drugi argument w funkcji fetch powinien być zamieniony na stringa metoda "JSON.stingify(data)"
       // wskazówka 2 -> po otrzymaniu danych zwracany obiekt to nie jest JSON, dopiero nalezy go zmienic na JSON "res.json()"
@@ -479,22 +520,40 @@ describe("zadania", () => {
         lastName: "Snow",
       };
 
-      Promise.resolve().then(({ json }) => {
-        expect(json.firstName).toBe("John");
-        expect(json.lastName).toBe("Snow");
-        done();
-      });
+      fetch("https://httpbin.org/post", {
+        method: "POST",
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          const json = res.json;
+          expect(json.firstName).toBe("John");
+          expect(json.lastName).toBe("Snow");
+          done();
+        });
     });
 
-    it("Wykonaj request do https://httpbin.org/post, response zapisz w pliku response.json", (done) => {
+    it.only("Wykonaj request do https://httpbin.org/post, response zapisz w pliku response.json", (done) => {
       // "data" jest to obiekt zawierajacy dane do wyslania
-      // wskazówka 1 ->drugi argument w funkcji fetch powinien być zamieniony na stringa metoda "JSON.stingify(data)"
+      // wskazówka 1 -> drugi argument w funkcji fetch powinien być zamieniony na stringa metoda "JSON.stingify(data)"
       // wskazówka 2 -> po otrzymaniu danych zwracany obiekt to nie jest JSON, dopiero nalezy go zmienic na JSON "res.json()"
       // API https://github.com/node-fetch/node-fetch
       const data = {
         firstName: "John",
         lastName: "Snow",
       };
+
+      fetch("https://httpbin.org/post", {
+        method: "POST",
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.text())
+        .then((text) => {
+          return fs.promises.writeFile("./response.json", text);
+        })
+        .then(() => {
+          done();
+        });
     });
   });
 });
