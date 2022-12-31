@@ -90,7 +90,7 @@ describe.skip("1. Values, types and operators", () => {
       if (found) {
         counter = counter + 100;
       }
-      expect(counter).toBe(1);
+      expect(counter).toBe(100);
     });
   });
 });
@@ -345,6 +345,9 @@ describe.skip("4. Functions", () => {
       b: 4,
     };
 
+    // .bind zwraca nową funkcję z przypisanym kontekstem, czyli this
+    // nie zmienia oryginalnej funkcji
+    // można przekazać argumenty do funkcji
     const subFunc1 = sub.bind(obj);
     const addFunc1 = add.bind(obj);
     const multiplyFunc1 = multiply.bind(obj);
@@ -381,6 +384,10 @@ describe.skip("4. Functions", () => {
     };
 
     expect(obj.result).toBe(undefined);
+
+    // .call wywołuje funkcję z przypisanym kontekstem, czyli this
+    // nie zmienia oryginalnej funkcji
+    // można przekazać argumenty do funkcji
     sub.call(obj, obj.a, obj.b);
     expect(obj.result).toBe(-1);
     add.call(obj, obj.a, obj.b);
@@ -403,6 +410,10 @@ describe.skip("4. Functions", () => {
     const argumentsArray2 = [3, 4];
 
     expect(obj.result).toBe(undefined);
+
+    // .apply wywołuje funkcję z przypisanym kontekstem, czyli this, ale argumenty muszą być przekazane w tablicy
+    // nie zmienia oryginalnej funkcji
+    // można przekazać argumenty do funkcji
     sub.apply(obj, argumentsArray1);
     expect(obj.result).toBe(-1);
     add.apply(obj, argumentsArray1);

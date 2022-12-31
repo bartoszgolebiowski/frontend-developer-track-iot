@@ -22,6 +22,32 @@ describe.skip("7. Closures", () => {
     expect(c.counter).toBe(undefined);
     expect(c.add()).toBe(4);
     expect(c.reset()).toBe(0);
+
+    // clousers - funkcja zagnieżdżona w funkcji, która ma dostęp do zmiennych z zewnętrznej funkcji
+    // dla osoby, która przyszła ze świata OOP, to clousers jest to instancja klasy.
+    // plusem clousers jest to, ze nie ma potrzeby wykorzystywania słowa kluczowego this
+    /*
+    class Counter {
+      constructor(initial) {
+        this.count = initial;
+      }
+      add() {
+        this.count++;
+        return this.count;
+      }
+      reset() {
+        this.count = initial;
+        return this.count;
+      }
+    }
+    const counterClass = new Counter(0);
+    counterClass.add();
+    counterClass.add();
+    counterClass.add();
+    expect(counterClass.counter).toBe(undefined);
+    expect(counterClass.add()).toBe(4);
+    expect(counterClass.reset()).toBe(0);
+    */
   });
 
   it("kolejka zadań", () => {
@@ -59,6 +85,43 @@ describe.skip("7. Closures", () => {
     queue.take()(45);
     queue.take()(45);
     queue.take()(45);
+
+    /*
+    class Queue {
+      constructor() {
+        this.queue = [];
+      }
+      take(): {
+        if (queue.length) {
+          const currentTask = queue.pop();
+          return (arg) => currentTask(arg);
+        }
+        return () => {};
+      }
+      add(task): {
+        queue.push(task);
+      }
+    }
+
+    const queueClass = Queue();
+    let count = 0;
+    queueClass.add((arg) => (count += arg));
+    queueClass.add((arg) => (count += arg));
+    queueClass.add((arg) => (count += arg));
+    queueClass.add((arg) => (count += arg));
+
+    queueClass.take()(12);
+    expect(count).toBe(12);
+    queueClass.take()(23);
+    expect(count).toBe(35);
+    queueClass.take()(34);
+    expect(count).toBe(69);
+    queueClass.take()(45);
+    expect(count).toBe(114);
+    queueClass.take()(45);
+    queueClass.take()(45);
+    queueClass.take()(45);
+    */
   });
 
   it("wykonaj wywolanie zwyczajnej funkcji zapisz w ramie", () => {
@@ -92,9 +155,76 @@ describe.skip("7. Closures", () => {
     expect(sumCached(1, 3)).toBe(4);
     expect(sumCached(1, 4)).toBe(5);
     expect(counter).toBe(3);
+
+    /*
+    class Cache {
+      constructor(func) {
+        this.cache = {}; // obiekt do przechowywanie wyników
+        this.func = func; // funkcja, która ma być wywołana
+      }
+      calc(...args) {
+        const key = args.join("-"); // klucz do przechowywania wyników 
+        if (this.cache[key]) { // jeśli klucz istnieje w cache, to zwróć wynik
+          return this.cache[key];   // jeśli klucz nie istnieje w cache, to wywołaj funkcję i zapisz wynik w cache
+        }
+        const result = this.func(...args); // wywołanie funkcji z argumentami i zapisanie wyniku 
+        this.cache[key] = result; // zapisanie wyniku w cache
+        return result; // zwrócenie wyniku
+      }
+    }
+
+    let counter = 0;
+    const sum = (a, b) => {
+      counter++;
+      return a + b;
+    };
+
+    const sumCached = Cache(sum);
+    expect(sumCached.calc(1, 2)).toBe(3);
+    expect(sumCached.calc(1, 3)).toBe(4);
+    expect(sumCached.calc(1, 4)).toBe(5);
+    expect(sumCached.calc(1, 2)).toBe(3);
+    expect(sumCached.calc(1, 3)).toBe(4);
+    expect(sumCached.calc(1, 4)).toBe(5);
+    expect(sumCached.calc(1, 2)).toBe(3);
+    expect(sumCached.calc(1, 3)).toBe(4);
+    expect(sumCached.calc(1, 4)).toBe(5);
+    expect(counter).toBe(3);
+    */
   });
 
   it("dekorator", () => {
+    // zamiast przekazać wszystkie argumenty do funkcji, możemy przekazać tylko część argumentów
+    // i zwrócić funkcję, która będzie oczekiwała na pozostałe argumenty
+    // przykład przekazywania wielu arugmentów sum(10)(20)(30)(40)
+    // przykład przekazywania jednego argumentu sum(10, 20, 30, 40)
+    // zaletą przekazywania wielu argumentów jest to, że możemy wywołać funkcję w dowolnym momencie
+    // i przekazać kolejne argumenty
+    /*
+      const firstPart = sum(10);
+      // do some logic here
+      // const part = ...
+      const secondPart = firstPart(part, part);
+      // do some logic here
+      // const part2 = ...
+      const thirdPart = secondPart(part2);
+      const result = thirdPart(40)
+     */
+
+    /*
+      produkcyjny przyklad uniwersalnej funkcji do obslugi formularzy, 
+      gdzie field to nazwa pola w formularzu
+      gdzie event to zdarzenie, np. onChange
+
+      const hadleChange = (field) => (event) =>{
+        const { value } = event.target;
+        setForm((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+      }
+    */
+
     const sum = (...initial) => {
       return (...first) => {
         return (...second) => {
@@ -211,6 +341,7 @@ describe.skip("8. Prototype", () => {
       Human.call(this, firstName, lastName);
       this.specialization = specialization;
     }
+
     Medic.prototype = Object.create(Human.prototype);
     Medic.prototype.heal = function () {
       return `I am ${this.specialization}`;
@@ -542,7 +673,8 @@ describe.skip("10. syntax ES6", () => {
 
   describe("operator speard", () => {
     it("zamiana argumentów na tablice", () => {
-      const f = (a, b, c, ...args) => args.map((el) => el + a + b + c);
+      const f = (a, b, c, ...rest) =>
+        rest.map((singleRest) => singleRest + a + b + c);
       expect(f(1, 2, 3, "a", "b", "c", { a: 1, b: 2 })).toEqual([
         "a123",
         "b123",
@@ -575,6 +707,7 @@ describe.skip("10. syntax ES6", () => {
         d: 4,
       };
       const obj3 = { ...obj1, ...obj2 };
+      // const obj3 = Object.assign({}, obj1, obj2);
       expect(obj3).toEqual({ a: 1, b: 2, c: 3, d: 4 });
     });
 
@@ -582,6 +715,7 @@ describe.skip("10. syntax ES6", () => {
       const arr1 = [1, 2];
       const arr2 = [3, 4];
       const arr3 = [...arr1, ...arr2];
+      // const arr3 = [].concat(arr1, arr2);
       expect(arr3).toEqual([1, 2, 3, 4]);
     });
   });
