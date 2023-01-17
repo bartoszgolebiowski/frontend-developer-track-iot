@@ -162,7 +162,7 @@ describe.skip("7. Closures", () => {
         this.cache = {}; // obiekt do przechowywanie wyników
         this.func = func; // funkcja, która ma być wywołana
       }
-      calc(...args) {
+      calc(...args) { ...args jest tablicą argumentów, czyli  calc(1,2,3,4,5) => [1,2,3,4,5], calc(1,2) => [1,2] itd.
         const key = args.join("-"); // klucz do przechowywania wyników 
         if (this.cache[key]) { // jeśli klucz istnieje w cache, to zwróć wynik
           return this.cache[key];   // jeśli klucz nie istnieje w cache, to wywołaj funkcję i zapisz wynik w cache
@@ -254,8 +254,10 @@ describe.skip("7. Closures", () => {
   it("zadania", () => {
     it("stwórz cache dla którego kolejność argumentów nie ma znaczenia", () => {
       const cache = (func) => {
-        return (...args) => {
-          const result = func(...args);
+        return (a, b) => {
+          const result = func(a, b);
+          // sprawdz czy argumenty są w cache, jeśli tak to zwróć wynik (połącz a i b w jeden klucz, np. a-b, tylko a i b zastąp wartościami)
+          // jeśli nie to wywołaj funkcję i zapisz wynik w cache
           return result;
         };
       };
@@ -291,6 +293,16 @@ describe.skip("7. Closures", () => {
 });
 
 describe.skip("8. Prototype", () => {
+  /*
+    __proto__ i prototype to dwa różne pojęcia w JavaScript, które dotyczą dziedziczenia obiektów.
+    __proto__ jest właściwością każdego obiektu, która wskazuje na jego prototyp. 
+    Jest to tzw. "właściwość dziedziczenia" lub "właściwość prototypu" i pozwala na dostęp do metod i właściwości prototypu danego obiektu.
+    prototype jest natomiast właściwością konstruktora (funkcji), która definiuje prototyp dla obiektów utworzonych przy użyciu tego konstruktora. 
+    Właściwość ta jest automatycznie ustawiana przy tworzeniu nowej funkcji i pozwala na dziedziczenie metod i właściwości między obiektami.
+
+    W skrócie, __proto__ jest właściwością obiektu i wskazuje na jego prototyp, natomiast prototype jest właściwością konstruktora i definiuje prototyp dla obiektów utworzonych przez ten konstruktor.
+*/
+
   it("prototype i __proto__", () => {
     function Human(firstName, lastName) {
       this.firstName = firstName;
@@ -342,7 +354,7 @@ describe.skip("8. Prototype", () => {
       this.specialization = specialization;
     }
 
-    Medic.prototype = Object.create(Human.prototype);
+    Medic.prototype = Object.create(Human.prototype); // Object.create tworzy nowy obiekt, który ma Human.prototype jako prototyp
     Medic.prototype.heal = function () {
       return `I am ${this.specialization}`;
     };
@@ -350,6 +362,7 @@ describe.skip("8. Prototype", () => {
 
     expect(medic.__proto__).toBe(Medic.prototype);
     expect(medic.prototype).toBe(undefined);
+    expect(Medic.prototype).not.toBe(undefined);
     expect(medic.walk()).toBe("I am human");
     expect(medic.heal()).toBe("I am surgeon");
   });
@@ -383,7 +396,7 @@ describe.skip("8. Prototype", () => {
     expect(medic.heal()).toBe("I am surgeon");
   });
 
-  describe("zadanie 1", () => {
+  describe.skip("zadanie 1", () => {
     // Zdefiniuj funkcje dziedziczące z prototype Animal
 
     // I. Shark
@@ -471,7 +484,7 @@ describe.skip("8. Prototype", () => {
     });
   });
 
-  describe("zadanie 2", () => {
+  describe.skip("zadanie 2", () => {
     // Zdefiniuj klasy
 
     // I. Shark
@@ -596,7 +609,7 @@ describe.skip("9. error handling", () => {
     } catch (e) {}
   });
 
-  it("zamien tablice na numbery, jezeli sie nie da to -999", () => {
+  it("Zadanie, zamien tablice na numbery, jezeli sie nie da to -999", () => {
     const arr = [
       1,
       2,
@@ -613,9 +626,22 @@ describe.skip("9. error handling", () => {
     ];
     expect(arr).toEqual([1, 2, 3, 4, -999, -999, -999, 5, 6, -999, -999, -999]);
   });
+
+  it("przekaż dalej error", () => {
+    try {
+      try {
+        throw new Error("test");
+      } catch (e) {
+        throw new Error("test2", { cause: e });
+      }
+    } catch (e) {
+      expect(e.message).toBe("test2");
+      expect(e.cause.message).toBe("test");
+    }
+  });
 });
 
-describe.skip("10. syntax ES6", () => {
+describe("10. syntax ES6", () => {
   describe("let & const", () => {
     it("let", () => {
       //ReferenceError: Cannot access 'a' before initialization
@@ -742,10 +768,10 @@ describe.skip("10. syntax ES6", () => {
   a total of ${card.amount * card.unitprice} bucks?`;
 
       expect(message).toMatchInlineSnapshot(`
-  "Hello Foo,
+"Hello Foo,
   want to buy 7 Bar for
   a total of 294 bucks?"
-  `);
+`);
     });
   });
 

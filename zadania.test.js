@@ -17,7 +17,7 @@ Quisque velit elit, varius ut scelerisque ut, efficitur vel risus. Vestibulum no
 Vivamus euismod vel ex a volutpat. Curabitur cursus pharetra ex, eget accumsan nibh luctus tristique. Vestibulum luctus risus ut consectetur aliquet. Ut congue dolor mauris, quis ultrices lectus mollis nec. Fusce ac arcu imperdiet, rutrum erat a, venenatis lorem. In finibus felis vel congue bibendum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas interdum, nulla nec aliquam varius, arcu sem posuere tortor, id hendrerit dui tellus non neque. In diam turpis, egestas ut consectetur porttitor, consequat quis diam. Curabitur porta ut arcu quis euismod. Fusce vitae metus non ipsum vulputate malesuada eu ut leo. Donec feugiat rutrum mi non bibendum. Praesent eu fringilla dui.
 `.split(" ");
 
-describe("zadania", () => {
+describe.skip("zadania", () => {
   describe.skip("Map", () => {
     it("API", () => {
       const map = new Map();

@@ -121,19 +121,19 @@ describe.skip("2. Conditional statement", () => {
       }
 
       // nie doda wartosci do zmiennej
-      // if (ONE_STRING == true) {
-      //         visited = true;
-      // }
-      // if (MINUS_ONE_STRING == true) {
-      //         visited = true;
-      // }
+      if (ONE_STRING == true) {
+        visited = true;
+      }
+      if (MINUS_ONE_STRING == true) {
+        visited = true;
+      }
 
       // doda wartosci do zmiennej
       // if (ONE_STRING) {
-      //         visited = true;
+      //   visited = true;
       // }
       // if (MINUS_ONE_STRING) {
-      //         visited = true;
+      //   visited = true;
       // }
 
       if (ZERO) {
@@ -281,13 +281,14 @@ describe.skip("3. Loops", () => {
       set.add("3");
       set.add("3");
       set.add("2");
+      set.add("11");
       set.add("1");
       set.add("6");
 
       for (const key of set) {
         result.push(key);
       }
-      expect(result).toEqual(["1", "2", "3", "6"]);
+      expect(result).toEqual(["1", "2", "3", "11", "6"]); // nie zawsze jest kolejność tak jak wstawialiśmy
     });
   });
 });
@@ -311,6 +312,7 @@ describe.skip("4. Functions", () => {
     };
   });
 
+  // wyskakuje błąd, ponieważ nie można użyć funkcji przed jej zadeklarowaniem
   it.skip("function expresion do zmiennej typu const", () => {
     expect(fun()).toBe(42);
 
@@ -319,6 +321,7 @@ describe.skip("4. Functions", () => {
     };
   });
 
+  // wyskakuje błąd, ponieważ nie można użyć funkcji przed jej zadeklarowaniem
   it.skip("function expresion do zmiennej typu let", () => {
     expect(fun()).toBe(42);
 
@@ -335,101 +338,103 @@ describe.skip("4. Functions", () => {
     }
   });
 
-  it("przykłady wykorzystania bind", () => {
-    const obj = {
-      a: 1,
-      b: 2,
-    };
-    const obj2 = {
-      a: 3,
-      b: 4,
-    };
+  describe("przykłady użycia call, apply, bind", () => {
+    it("przykłady wykorzystania bind", () => {
+      const obj = {
+        a: 1,
+        b: 2,
+      };
+      const obj2 = {
+        a: 3,
+        b: 4,
+      };
 
-    // .bind zwraca nową funkcję z przypisanym kontekstem, czyli this
-    // nie zmienia oryginalnej funkcji
-    // można przekazać argumenty do funkcji
-    const subFunc1 = sub.bind(obj);
-    const addFunc1 = add.bind(obj);
-    const multiplyFunc1 = multiply.bind(obj);
+      // .bind zwraca nową funkcję z przypisanym kontekstem, czyli this
+      // nie zmienia oryginalnej funkcji
+      // można przekazać argumenty do funkcji
+      const subFunc1 = sub.bind(obj);
+      const addFunc1 = add.bind(obj);
+      const multiplyFunc1 = multiply.bind(obj);
 
-    expect(obj.result).toBe(undefined);
-    subFunc1(obj.a, obj.b);
-    expect(obj.result).toBe(-1);
-    addFunc1(obj.a, obj.b);
-    expect(obj.result).toBe(3);
-    multiplyFunc1(obj.a, obj.b);
-    expect(obj.result).toBe(2);
+      expect(obj.result).toBe(undefined);
+      subFunc1(obj.a, obj.b);
+      expect(obj.result).toBe(-1);
+      addFunc1(obj.a, obj.b);
+      expect(obj.result).toBe(3);
+      multiplyFunc1(obj.a, obj.b);
+      expect(obj.result).toBe(2);
 
-    const subFunc2 = sub.bind(obj2);
-    const addFunc2 = add.bind(obj2);
-    const multiplyFunc2 = multiply.bind(obj2);
+      const subFunc2 = sub.bind(obj2);
+      const addFunc2 = add.bind(obj2);
+      const multiplyFunc2 = multiply.bind(obj2);
 
-    expect(obj2.result).toBe(undefined);
-    subFunc2(obj2.a, obj2.b);
-    expect(obj2.result).toBe(-1);
-    addFunc2(obj2.a, obj2.b);
-    expect(obj2.result).toBe(7);
-    multiplyFunc2(obj2.a, obj2.b);
-    expect(obj2.result).toBe(12);
+      expect(obj2.result).toBe(undefined);
+      subFunc2(obj2.a, obj2.b);
+      expect(obj2.result).toBe(-1);
+      addFunc2(obj2.a, obj2.b);
+      expect(obj2.result).toBe(7);
+      multiplyFunc2(obj2.a, obj2.b);
+      expect(obj2.result).toBe(12);
+    });
+
+    it("przykłady wykorzystania call", () => {
+      const obj = {
+        a: 1,
+        b: 2,
+      };
+      const obj2 = {
+        a: 3,
+        b: 4,
+      };
+
+      expect(obj.result).toBe(undefined);
+
+      // .call wywołuje funkcję z przypisanym kontekstem, czyli this
+      // nie zmienia oryginalnej funkcji
+      // można przekazać argumenty do funkcji
+      sub.call(obj, obj.a, obj.b);
+      expect(obj.result).toBe(-1);
+      add.call(obj, obj.a, obj.b);
+      expect(obj.result).toBe(3);
+      multiply.call(obj, obj.a, obj.b);
+      expect(obj.result).toBe(2);
+
+      sub.call(obj2, obj2.a, obj2.b);
+      expect(obj2.result).toBe(-1);
+      add.call(obj2, obj2.a, obj2.b);
+      expect(obj2.result).toBe(7);
+      multiply.call(obj2, obj2.a, obj2.b);
+      expect(obj2.result).toBe(12);
+    });
+
+    it("przykłady wykorzystania apply", () => {
+      const obj = {};
+      const obj2 = {};
+      const argumentsArray1 = [1, 2];
+      const argumentsArray2 = [3, 4];
+
+      expect(obj.result).toBe(undefined);
+
+      // .apply wywołuje funkcję z przypisanym kontekstem, czyli this, ale argumenty muszą być przekazane w tablicy
+      // nie zmienia oryginalnej funkcji
+      // można przekazać argumenty do funkcji
+      sub.apply(obj, argumentsArray1);
+      expect(obj.result).toBe(-1);
+      add.apply(obj, argumentsArray1);
+      expect(obj.result).toBe(3);
+      multiply.apply(obj, argumentsArray1);
+      expect(obj.result).toBe(2);
+
+      sub.apply(obj2, argumentsArray2);
+      expect(obj2.result).toBe(-1);
+      add.apply(obj2, argumentsArray2);
+      expect(obj2.result).toBe(7);
+      multiply.apply(obj2, argumentsArray2);
+      expect(obj2.result).toBe(12);
+    });
   });
 
-  it("przykłady wykorzystania call", () => {
-    const obj = {
-      a: 1,
-      b: 2,
-    };
-    const obj2 = {
-      a: 3,
-      b: 4,
-    };
-
-    expect(obj.result).toBe(undefined);
-
-    // .call wywołuje funkcję z przypisanym kontekstem, czyli this
-    // nie zmienia oryginalnej funkcji
-    // można przekazać argumenty do funkcji
-    sub.call(obj, obj.a, obj.b);
-    expect(obj.result).toBe(-1);
-    add.call(obj, obj.a, obj.b);
-    expect(obj.result).toBe(3);
-    multiply.call(obj, obj.a, obj.b);
-    expect(obj.result).toBe(2);
-
-    sub.call(obj2, obj2.a, obj2.b);
-    expect(obj2.result).toBe(-1);
-    add.call(obj2, obj2.a, obj2.b);
-    expect(obj2.result).toBe(7);
-    multiply.call(obj2, obj2.a, obj2.b);
-    expect(obj2.result).toBe(12);
-  });
-
-  it("przykłady wykorzystania apply", () => {
-    const obj = {};
-    const obj2 = {};
-    const argumentsArray1 = [1, 2];
-    const argumentsArray2 = [3, 4];
-
-    expect(obj.result).toBe(undefined);
-
-    // .apply wywołuje funkcję z przypisanym kontekstem, czyli this, ale argumenty muszą być przekazane w tablicy
-    // nie zmienia oryginalnej funkcji
-    // można przekazać argumenty do funkcji
-    sub.apply(obj, argumentsArray1);
-    expect(obj.result).toBe(-1);
-    add.apply(obj, argumentsArray1);
-    expect(obj.result).toBe(3);
-    multiply.apply(obj, argumentsArray1);
-    expect(obj.result).toBe(2);
-
-    sub.apply(obj2, argumentsArray2);
-    expect(obj2.result).toBe(-1);
-    add.apply(obj2, argumentsArray2);
-    expect(obj2.result).toBe(7);
-    multiply.apply(obj2, argumentsArray2);
-    expect(obj2.result).toBe(12);
-  });
-
-  describe("IIFE – Immediatly Invoked Function Expression", () => {
+  describe("IIFE – immediately Invoked Function Expression", () => {
     it("wywołanie IIFE, jako sposob aby nie zasmieciac obiektu window", () => {
       (function () {
         let firstVariable;
@@ -445,7 +450,7 @@ describe.skip("4. Functions", () => {
         (function (copyBalance) {
           let balance = copyBalance; // prywatna zmienna
           return {
-            withdraw: function (amount) {
+            withdraw: (amount) => {
               if (balance >= amount) {
                 balance -= amount;
                 return balance;
@@ -453,6 +458,14 @@ describe.skip("4. Functions", () => {
                 return "Brakło pieniedzy";
               }
             },
+            // withdraw: function (amount) {
+            //   if (balance >= amount) {
+            //     balance -= amount;
+            //     return balance;
+            //   } else {
+            //     return "Brakło pieniedzy";
+            //   }
+            // },
           };
         })(balance);
 
@@ -473,16 +486,17 @@ describe("5. This", () => {
   describe("function invocation", () => {
     it("function invocation", () => {
       function test() {
+        //odkomentuj aby zobaczyc co jest w this
+        //console.log(this);
         expect(this.expect).toBe(expect);
       }
       test();
     });
 
-    it("use strict", () => {
-      function test() {
-        "use strict";
-        expect(this).toBe(undefined);
-      }
+    it("arrow function invocation", () => {
+      const test = () => {
+        expect(this).toEqual({});
+      };
       test();
     });
 
@@ -494,7 +508,7 @@ describe("5. This", () => {
         sum: function () {
           expect(this.numberA).toBe(5);
           expect(this.numberB).toBe(10);
-
+          // this ponizej będzie obiektem globalnym, dla przegladarki jest to window, dla testów jest to global node
           function calculate() {
             expect(this.numberA).not.toBe(5);
             expect(this.numberB).not.toBe(10);
@@ -502,6 +516,14 @@ describe("5. This", () => {
             return this.numberA + this.numberB;
           }
 
+          const calculateArrow = () => {
+            expect(this.numberA).toBe(5);
+            expect(this.numberB).toBe(10);
+            expect(this.expect).not.toBe(expect);
+            return this.numberA + this.numberB;
+          };
+
+          expect(calculateArrow()).toBe(15);
           return calculate();
         },
       };
@@ -531,6 +553,45 @@ describe("5. This", () => {
 
       const result = numbers.sum();
       expect(result).toBe(15);
+    });
+
+    it("use strict", () => {
+      function test() {
+        "use strict";
+        // gdy use strict jest w funkcji to this jest undefined dla obiektu window i globalnego obiektu node
+        expect(this).toBe(undefined);
+      }
+      test();
+    });
+
+    it("use strict 2", () => {
+      function test() {
+        "use strict";
+        expect(this).toBe(undefined);
+        const obj = {
+          test: () => {
+            "use strict";
+            expect(this).toBe(undefined);
+          },
+        };
+        obj.test();
+      }
+      test();
+    });
+
+    it("use strict 3", () => {
+      function test() {
+        "use strict";
+        expect(this).toBe(undefined);
+        const obj = {
+          test: function () {
+            "use strict";
+            expect(this).toBe(obj);
+          },
+        };
+        obj.test();
+      }
+      test();
     });
 
     it("iife", () => {
@@ -597,7 +658,7 @@ describe("5. This", () => {
       };
 
       const fun = obj.sayHello;
-      expect(fun()).toBe("Hello undefined"); // -> sayHello.call(this)
+      expect(fun()).toBe("Hello undefined");
     });
 
     it("wywołanie metody wewnatrz obiektu z uzyciem call", () => {
@@ -625,6 +686,7 @@ describe("5. This", () => {
   });
 
   describe("constructor invocation", () => {
+    // prosze nie używać konstruktorów dla funckcji
     it("wywołanie konstruktora", () => {
       function Person(name, age) {
         this.name = name;
@@ -654,8 +716,9 @@ describe("5. This", () => {
       function Person(name, age) {
         this.name = name;
         this.age = age;
+        //return undefined
       }
-
+      // zwyczajne wywolanie funkcji, gdzie return nie jest zdefiniowany dlatego zwraca undefined
       const person = Person("John", 30);
       expect(person).toBe(undefined);
     });
@@ -679,21 +742,7 @@ describe("5. This", () => {
   });
 
   describe.skip("zadania", () => {
-    it("1", () => {
-      function Person(name, age) {
-        this.name = name;
-        this.age = age;
-      }
-
-      Person.prototype.sayHello = function () {
-        return `Hello ${this.name}`;
-      };
-
-      const person = new Person("John", 30);
-      expect(person.sayHello()).toBe("");
-    });
-
-    it("2", () => {
+    it.skip("1", () => {
       const fullname = "John Doe";
       const obj = {
         fullname: "Colin Ihrig",
@@ -706,12 +755,15 @@ describe("5. This", () => {
       };
 
       const test = obj.prop.getFullname;
+      // proszę zgadnąć co tutaj będzie i wpisać wartości następnie usunąć .skip
       expect(obj.prop.getFullname()).toBe("");
+      // proszę zgadnąć co tutaj będzie i wpisać wartości następnie usunąć .skip
       expect(test()).toBe("");
+      // proszę zgadnąć co tutaj będzie i wpisać wartości następnie usunąć .skip
       expect(test.call({ fullname: "test" })).toBe("");
     });
 
-    it("3", () => {
+    it.skip("2", () => {
       const car = {
         brand: "Nissan",
         getBrand: function () {
@@ -723,6 +775,7 @@ describe("5. This", () => {
         },
       };
 
+      // proszę zgadnąć co tutaj będzie i wpisać wartości następnie usunąć .skip
       expect(car.getBrand()).toBe("");
     });
   });
@@ -736,12 +789,14 @@ describe.skip("6. Hoisting", () => {
   });
 
   it.skip("przypisanie zmiennej typu let", () => {
+    // nie zadziała, bo let jest hoistowane, ale nie jest inicjalizowane, wyrzuci błąd
     expect(a).toBe(undefined);
     let a = 1;
     expect(a).toBe(1);
   });
 
   it.skip("przypisanie zmiennej typu const", () => {
+    // nie zadziała, bo let jest hoistowane, ale nie jest inicjalizowane, wyrzuci błąd
     expect(a).toBe(undefined);
     const a = 1;
     expect(a).toBe(1);
@@ -786,6 +841,7 @@ describe.skip("6. Hoisting", () => {
   });
 
   it.skip("deklaracja klasy po stworzeniem instancji klasy", () => {
+    //    ReferenceError: Cannot access 'Hobbit' before initialization
     var Frodo = new Hobbit();
     Frodo.height = 100;
     Frodo.weight = 300;
