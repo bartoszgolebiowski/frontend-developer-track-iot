@@ -469,7 +469,7 @@ describe.skip("4. Functions", () => {
   });
 });
 
-describe.skip("5. This", () => {
+describe("5. This", () => {
   describe("function invocation", () => {
     it("function invocation", () => {
       function test() {
@@ -597,7 +597,7 @@ describe.skip("5. This", () => {
       };
 
       const fun = obj.sayHello;
-      expect(fun()).toBe("Hello "); // -> sayHello.call(this)
+      expect(fun()).toBe("Hello undefined"); // -> sayHello.call(this)
     });
 
     it("wywołanie metody wewnatrz obiektu z uzyciem call", () => {
@@ -678,7 +678,7 @@ describe.skip("5. This", () => {
     });
   });
 
-  describe("zadania", () => {
+  describe.skip("zadania", () => {
     it("1", () => {
       function Person(name, age) {
         this.name = name;
